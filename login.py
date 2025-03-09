@@ -33,6 +33,4 @@ while True:
     if secim == "4":
         print("Exited")
         #logged_in = None
-
-
         
