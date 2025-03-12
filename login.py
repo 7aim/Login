@@ -1,7 +1,12 @@
 import datetime
 
+#user,password,role
 users = {}
+
+#log
 activity_log = []
+
+#current account
 logged_in = None
 
 #Giris,cixis kimi emaliyyatlari qeyde alir.
@@ -40,8 +45,7 @@ def login_user():
     if user not in users:
         print("\nUser not found!")
         log_activity(user, "Login Attempt", "Failure: User not found")
-        
-    
+         
     password = input("Password: ")
     if users[user]['password'] == password:
         logged_in = user
@@ -58,7 +62,6 @@ def reset_password():
         print("\nYou need to login first!")
         log_activity(None, "Password Reset Attempt", "Failure: Not logged in")
         
-    
     #admin basqalarinin sifresini deyise biler.
     if users[logged_in]['role'] == 'admin':
         target = input("Enter username to reset: ")
@@ -123,7 +126,9 @@ def admin_panel():
             if user not in users:
                 print("\nUser not found!")
                 continue
+
             new_role = input("New role (admin/user): ").lower()
+            
             if new_role in ['admin', 'user']:
                 users[user]['role'] = new_role
                 print("\nRole updated!")
@@ -157,7 +162,6 @@ while True:
             print("4. Admin Panel")
         print("5. Exit")
         
-
         choice = input("Select: ")
         
         if choice == '1':
@@ -181,6 +185,7 @@ while True:
         print("1. Register")
         print("2. Login")
         print("3. Exit")
+
         choice = input("Select: ")
         
         if choice == '1':
