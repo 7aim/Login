@@ -146,6 +146,7 @@ while True:
     if logged_in:
         print(f"Logged in as: {logged_in} ({users[logged_in]['role']})")
 
+<<<<<<< HEAD
         print("1. Logout")
         print("2. Reset Password")
         print("3. Delete Account")
@@ -188,3 +189,36 @@ while True:
         else:
             print("\nInvalid choice!")
 
+=======
+    print("\n1-Register\n2-Login\n3-Reset password\n4-Logout\n")
+    secim = input("1/2/3/4 : ")
+    
+    if secim == "1":
+        user = input("Username: ")
+        if user not in users:
+            users[user] = input("Şifre: ")
+            print("\nRegistration complete")
+        else:
+            print("\nUser already exists")
+    
+    if secim == "2":
+        user = input("UsernAme: ")
+        if users[user] == input("Şifre: "):
+            #logged_in = user
+            print(f"\nWelcome {user}!")
+        else:
+            print("\nIncorrect input")
+    
+    if secim == "3":
+        user = input("Username: ")
+        if user in users:
+            users[user] = input("NEw password: ")
+            print("\nPassword changed!")
+        else:
+            print("\nNo user")
+    
+    if secim == "4":
+        print("Exited")
+        #logged_in = None
+        
+>>>>>>> ab9eca6455da22c7db9870fc200611256e27a38b
