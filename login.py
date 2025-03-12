@@ -10,7 +10,7 @@ activity_log = []
 logged_in = None
 
 #Giris,cixis kimi emaliyyatlari qeyde alir.
-def log_activity(username, action, status):
+def logActivity(username, action, status):
     timestamp = datetime.datetime.now()
     activity_log.append({
         'timestamp': timestamp,
@@ -20,12 +20,12 @@ def log_activity(username, action, status):
     })
 
 #Qeydiyyat hissesi,qeydiyyatdan kecen ilk nefer admin hesab olunur.
-def register_user():
+def registerUser():
 
     user = input("Username: ")
     if user in users:
         print("\nUser already exists!")
-        log_activity(user, "Register Attempt", "Failure: User exists")
+        logActivity(user, "Register Attempt", "Failure: User exists")
          
     password = input("Password: ")
 
@@ -36,39 +36,39 @@ def register_user():
 
     users[user] = {'password': password, 'role': role}
     print(f"\nRegistration successful. You're now {'admin' if role == 'admin' else 'user'}!")
-    log_activity(user, "Register", "Success")
+    logActivity(user, "Register", "Success")
 
 #Login hissesi
-def login_user():
+def loginUser():
     global logged_in
     user = input("Username: ")
     if user not in users:
         print("\nUser not found!")
-        log_activity(user, "Login Attempt", "Failure: User not found")
+        logActivity(user, "Login Attempt", "Failure: User not found")
          
     password = input("Password: ")
     if users[user]['password'] == password:
         logged_in = user
         print(f"\nWelcome {user}!")
-        log_activity(user, "Login", "Success")
+        logActivity(user, "Login", "Success")
     else:
         print("\nIncorrect password!")
-        log_activity(user, "Login Attempt", "Failure: Wrong password")
+        logActivity(user, "Login Attempt", "Failure: Wrong password")
 
 #Sifre sifirlama
-def reset_password():
+def resetPassword():
     global logged_in
     if logged_in is None:
         print("\nYou need to login first!")
-        log_activity(None, "Password Reset Attempt", "Failure: Not logged in")
+        logActivity(None, "Password Reset Attempt", "Failure: Not logged in")
         
     #admin basqalarinin sifresini deyise biler.
     if users[logged_in]['role'] == 'admin':
         target = input("Enter username to reset: ")
         if target not in users:
             print("\nUser not found!")
-            log_activity(logged_in, "Admin Password Reset", f"Failure: {target} not found")
-            reset_password()
+            logActivity(logged_in, "Admin Password Reset", f"Failure: {target} not found")
+            resetPassword()
                     
     else:
         target = logged_in
@@ -76,21 +76,21 @@ def reset_password():
     new_pass = input("New password: ")
     users[target]['password'] = new_pass
     print("\nPassword updated successfully!")
-    log_activity(logged_in, "Password Reset", f"Success: {target}'s password changed")
+    logActivity(logged_in, "Password Reset", f"Success: {target}'s password changed")
 
 #Hesab silme
-def delete_account():
+def deleteAccount():
     global logged_in, users
     if logged_in is None:
         print("\nLogin required!")
-        log_activity(None, "Delete Attempt", "Failure: Not logged in")
+        logActivity(None, "Delete Attempt", "Failure: Not logged in")
         
     
     if users[logged_in]['role'] == 'admin':
         target = input("Enter username to delete: ")
         if target not in users:
             print("\nUser not found!")
-            log_activity(logged_in, "Admin Delete Attempt", f"Failure: {target} not found")
+            logActivity(logged_in, "Admin Delete Attempt", f"Failure: {target} not found")
             
     else:
         target = logged_in
@@ -99,15 +99,15 @@ def delete_account():
     if confirm == 'y':
         del users[target]
         print("\nAccount deleted!")
-        log_activity(logged_in, "Account Deleted", f"Success: {target} removed")
+        logActivity(logged_in, "Account Deleted", f"Success: {target} removed")
         if target == logged_in:
             logged_in = None
     else:
         print("\nDeletion canceled!")
-        log_activity(logged_in, "Delete Attempt", "Cancelled")
+        logActivity(logged_in, "Delete Attempt", "Cancelled")
 
 #Adminin deyisiklikler apardigi hisse(Qeydiyyatlara ve loga baxmaq,rol deyismek)
-def admin_panel():
+def adminPanel():
     while True:
         print("\n[ADMIN PANEL]")
         print("1. List users")
@@ -128,11 +128,11 @@ def admin_panel():
                 continue
 
             new_role = input("New role (admin/user): ").lower()
-            
+
             if new_role in ['admin', 'user']:
                 users[user]['role'] = new_role
                 print("\nRole updated!")
-                log_activity(logged_in, "Role Changed", f"{user} -> {new_role}")
+                logActivity(logged_in, "Role Changed", f"{user} -> {new_role}")
             else:
                 print("\nInvalid role!")
         
@@ -165,14 +165,14 @@ while True:
         choice = input("Select: ")
         
         if choice == '1':
-            log_activity(logged_in, "Logout", "Success")
+            logActivity(logged_in, "Logout", "Success")
             logged_in = None
         elif choice == '2':
-            reset_password()
+            resetPassword()
         elif choice == '3':
-            delete_account()
+            deleteAccount()
         elif choice == '4' and users[logged_in]['role'] == 'admin':
-            admin_panel()
+            adminPanel()
         elif choice == '5':
             print("\nExiting...")
             break
@@ -189,9 +189,9 @@ while True:
         choice = input("Select: ")
         
         if choice == '1':
-            register_user()
+            registerUser()
         elif choice == '2':
-            login_user()
+            loginUser()
         elif choice == '3':
             print("\nExiting...")
             break
