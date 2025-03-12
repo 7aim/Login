@@ -4,7 +4,7 @@ users = {}
 activity_log = []
 logged_in = None
 
-
+#Giris,cixis kimi emaliyyatlari qeyde alir.
 def log_activity(username, action, status):
     timestamp = datetime.datetime.now()
     activity_log.append({
@@ -14,7 +14,7 @@ def log_activity(username, action, status):
         'status': status
     })
 
-
+#Qeydiyyat hissesi,qeydiyyatdan kecen ilk nefer admin hesab olunur.
 def register_user():
 
     user = input("Username: ")
@@ -33,7 +33,7 @@ def register_user():
     print(f"\nRegistration successful. You're now {'admin' if role == 'admin' else 'user'}!")
     log_activity(user, "Register", "Success")
 
-
+#Login hissesi
 def login_user():
     global logged_in
     user = input("Username: ")
@@ -51,7 +51,7 @@ def login_user():
         print("\nIncorrect password!")
         log_activity(user, "Login Attempt", "Failure: Wrong password")
 
-
+#Sifre sifirlama
 def reset_password():
     global logged_in
     if logged_in is None:
@@ -59,6 +59,7 @@ def reset_password():
         log_activity(None, "Password Reset Attempt", "Failure: Not logged in")
         return
     
+    #admin basqalarinin sifresini deyise biler.
     if users[logged_in]['role'] == 'admin':
         target = input("Enter username to reset: ")
         if target not in users:
@@ -73,7 +74,7 @@ def reset_password():
     print("\nPassword updated successfully!")
     log_activity(logged_in, "Password Reset", f"Success: {target}'s password changed")
 
-
+#Hesab silme
 def delete_account():
     global logged_in, users
     if logged_in is None:
@@ -101,7 +102,7 @@ def delete_account():
         print("\nDeletion canceled!")
         log_activity(logged_in, "Delete Attempt", "Cancelled")
 
-
+#Adminin deyisiklikler apardigi hisse(Qeydiyyatlara ve loga baxmaq,rol deyismek)
 def admin_panel():
     while True:
         print("\n[ADMIN PANEL]")
@@ -114,7 +115,7 @@ def admin_panel():
         if choice == '1':
             print("\nRegistered Users:")
             for user in users.items():
-                print(f"- {user}")
+                print(f"- user : {user[0]} --- role : {user[1]["role"]}")
         
         elif choice == '2':
             user = input("Username: ")
@@ -140,9 +141,11 @@ def admin_panel():
         else:
             print("\nInvalid choice!")
 
-
+#Esas hisse
 while True:
     print("\n" + "-"*30)
+
+    #hesab qeydiyyatdadirsa bu hisseye atir
     if logged_in:
         print(f"Logged in as: {logged_in} ({users[logged_in]['role']})")
 
@@ -171,6 +174,7 @@ while True:
         else:
             print("\nInvalid choice!")
     
+    #hesab qeydiyyatda deyilse bu hisseye atir
     else:
 
         print("1. Register")
