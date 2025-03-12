@@ -21,7 +21,7 @@ def register_user():
     if user in users:
         print("\nUser already exists!")
         log_activity(user, "Register Attempt", "Failure: User exists")
-        return 
+         
     password = input("Password: ")
 
     if len(users) == 0:
@@ -40,7 +40,7 @@ def login_user():
     if user not in users:
         print("\nUser not found!")
         log_activity(user, "Login Attempt", "Failure: User not found")
-        return
+        
     
     password = input("Password: ")
     if users[user]['password'] == password:
@@ -57,7 +57,7 @@ def reset_password():
     if logged_in is None:
         print("\nYou need to login first!")
         log_activity(None, "Password Reset Attempt", "Failure: Not logged in")
-        return
+        
     
     #admin basqalarinin sifresini deyise biler.
     if users[logged_in]['role'] == 'admin':
@@ -65,7 +65,8 @@ def reset_password():
         if target not in users:
             print("\nUser not found!")
             log_activity(logged_in, "Admin Password Reset", f"Failure: {target} not found")
-            return
+            reset_password()
+                    
     else:
         target = logged_in
     
@@ -80,14 +81,14 @@ def delete_account():
     if logged_in is None:
         print("\nLogin required!")
         log_activity(None, "Delete Attempt", "Failure: Not logged in")
-        return
+        
     
     if users[logged_in]['role'] == 'admin':
         target = input("Enter username to delete: ")
         if target not in users:
             print("\nUser not found!")
             log_activity(logged_in, "Admin Delete Attempt", f"Failure: {target} not found")
-            return
+            
     else:
         target = logged_in
     
