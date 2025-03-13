@@ -1,5 +1,13 @@
 import datetime
 
+"""
+@Homework@
+users, activity_log should be as external file (.txt)
+session management
+hashing passwords
+error handling
+modular system
+"""
 #user,password,role
 users = {}
 
