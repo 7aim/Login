@@ -2,7 +2,6 @@ import login
 """
 @Homework@
 hashing passwords
-error handling ???
 """
 
 while True:

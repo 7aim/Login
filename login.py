@@ -1,5 +1,12 @@
 import datetime
+import hashlib
 import json
+
+def hashPassword(password):
+    return hashlib.sha256(password.encode('utf-8')).hexdigest()
+
+def verify_password(entered_password, stored_hash):
+    return entered_password == stored_hash
 
 LOG_DATA = "log.txt"
 def loadLog():
@@ -40,6 +47,7 @@ users = loadUsers()
 activity_log = []
 #current account
 logged_in = None
+hashed_password = ""
 
 # Giris,cixis kimi emaliyyatlari qeyde alir.
 def logActivity(username, action, status):
@@ -55,13 +63,14 @@ def logActivity(username, action, status):
 # Qeydiyyat hissesi,qeydiyyatdan kecen ilk nefer admin hesab olunur.
 def registerUser():
     global users
+
     #name
     user = input("Username: ")
     while len(user) < 3:
         print("Character number must be greater than 2")
         user = input("Username: ")
     while user in users:
-        print("\nUser already exists!")
+        print("User already exists!\n")
         user = input("Username: ")  
 
         logActivity(user, "Register Attempt", "Failure: User exists")
@@ -71,15 +80,16 @@ def registerUser():
     while len(password) < 3:
         print("Password length must be greater than 5")
         password = input("Password: ")
+    hashed_password = hashPassword(password)
     #role
     if len(users) == 0:
         role = 'admin'
     else:
         role = 'user'
 
-    users[user] = {'password': password, 'role': role}
+    users[user] = {'password': hashed_password, 'role': role}
     saveUsers(users)
-    print(f"\nRegistration successful. You're now {'admin' if role == 'admin' else 'user'}!")
+    print(f"Registration successful. You're now {'admin' if role == 'admin' else 'user'}!\n")
 
     logActivity(user, "Register", "Success")
     saveLogTemp()
@@ -87,35 +97,38 @@ def registerUser():
 # Login hissesi
 def loginUser():
     global logged_in
+
     #name
     user = input("Username: ")
     while user not in users:
-        print("\nUser not found!")
+        print("User not found!\n")
         user = input("Username: ")
 
         logActivity(user, "Login Attempt", "Failure: User not found")
         saveLogTemp()
     #password
-    password = input("Password: ")
-    if users[user]['password'] == password:
-        logged_in = user
-        saveSession(logged_in)
-        print(f"\nWelcome {user}!")
+    while True:
+        password_login = input("Password: ")
+        hashed_password_login = hashPassword(password_login)
+        if hashed_password_login == users[user]['password']:
+            logged_in = user
+            saveSession(logged_in)
+            print(f"Welcome {user}!\n")
 
-        logActivity(user, "Login", "Success")
-        saveLogTemp()
-    else:
-        print("\nIncorrect password!")
-        logActivity(user, "Login Attempt", "Failure: Wrong password")
-        saveLogTemp()
-        loginUser()
+            logActivity(user, "Login", "Success")
+            saveLogTemp()
+            break
+        else:
+            print("Incorrect password!\n")
+            logActivity(user, "Login Attempt", "Failure: Wrong password")
+            saveLogTemp()
 
 # Sifre sifirlama
 def resetPassword():
     global logged_in
 
     if logged_in is None:
-        print("\nYou need to login first!")
+        print("You need to login first!\n")
 
         logActivity(None, "Password Reset Attempt", "Failure: Not logged in")
         saveLogTemp()     
@@ -123,7 +136,7 @@ def resetPassword():
     if users[logged_in]['role'] == 'admin':
         target = input("Enter username to reset: ")
         if target not in users:
-            print("\nUser not found!")
+            print("User not found!\n")
 
             logActivity(logged_in, "Admin Password Reset", f"Failure: {target} not found")
             saveLogTemp()
@@ -133,7 +146,7 @@ def resetPassword():
     
     new_pass = input("New password: ")
     users[target]['password'] = new_pass
-    print("\nPassword updated successfully!")
+    print("Password updated successfully!\n")
 
     logActivity(logged_in, "Password Reset", f"Success: {target}'s password changed")
     saveLogTemp()
@@ -143,14 +156,14 @@ def deleteAccount():
     global logged_in, users
 
     if logged_in is None:
-        print("\nLogin required!")
+        print("Login required!\n")
 
         logActivity(None, "Delete Attempt", "Failure: Not logged in")
         saveLogTemp() 
     if users[logged_in]['role'] == 'admin':
         target = input("Enter username to delete: ")
         if target not in users:
-            print("\nUser not found!")
+            print("User not found!\n")
 
             logActivity(logged_in, "Admin Delete Attempt", f"Failure: {target} not found")
             saveLogTemp()          
@@ -160,14 +173,14 @@ def deleteAccount():
     confirm = input(f"Delete {target}? (y/n): ").lower()
     if confirm == 'y':
         del users[target]
-        print("\nAccount deleted!")
+        print("Account deleted!\n")
 
         logActivity(logged_in, "Account Deleted", f"Success: {target} removed")
         saveLogTemp()
         if target == logged_in:
             logged_in = None
     else:
-        print("\nDeletion canceled!")
+        print("Deletion canceled!\n")
         logActivity(logged_in, "Delete Attempt", "Cancelled")
         saveLogTemp()
 
@@ -190,25 +203,25 @@ def adminPanel():
         elif choice == '2':
             user = input("Username: ")
             if user not in users:
-                print("\nUser not found!")
+                print("User not found!\n")
                 continue
 
             new_role = input("New role (admin/user): ").lower()
 
             if new_role in ['admin', 'user']:
                 users[user]['role'] = new_role
-                print("\nRole updated!")
+                print("Role updated!\n")
                 logActivity(logged_in, "Role Changed", f"{user} -> {new_role}")
                 saveLogTemp()
             else:
-                print("\nInvalid role!")
+                print("Invalid role!\n")
         
         elif choice == '3':
-            print("\nActivity Log:")
+            print("\nActivity Log:\n")
             print(loadLog())
         
         elif choice == '4':
             break
         
         else:
-            print("\nInvalid choice!")
+            print("Invalid choice!\n")
