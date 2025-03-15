@@ -1,4 +1,5 @@
 import datetime
+import json
 
 """
 @Homework@
@@ -8,12 +9,23 @@ hashing passwords
 error handling
 modular system
 """
-#user,password,role
-users = {}
+DOSYA_ADI = "users.json"
 
+def loadUsers():
+    try:
+        with open(DOSYA_ADI, 'r') as f:
+            return json.load(f)
+    except json.JSONDecodeError:
+        return {}
+
+def saveUsers(data):
+    with open(DOSYA_ADI, 'w') as f:
+        json.dump(data, f, indent=4)
+
+#user,password,role
+users = loadUsers()
 #log
 activity_log = []
-
 #current account
 logged_in = None
 
@@ -29,20 +41,22 @@ def logActivity(username, action, status):
 
 #Qeydiyyat hissesi,qeydiyyatdan kecen ilk nefer admin hesab olunur.
 def registerUser():
-
+    global users
     user = input("Username: ")
-    if user in users:
+    while user in users:
         print("\nUser already exists!")
+        user = input("Username: ")  
         logActivity(user, "Register Attempt", "Failure: User exists")
          
     password = input("Password: ")
-
+    print(len(users))
     if len(users) == 0:
         role = 'admin'
     else:
         role = 'user'
 
     users[user] = {'password': password, 'role': role}
+    saveUsers(users)
     print(f"\nRegistration successful. You're now {'admin' if role == 'admin' else 'user'}!")
     logActivity(user, "Register", "Success")
 
