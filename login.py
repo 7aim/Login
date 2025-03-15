@@ -9,18 +9,24 @@ hashing passwords
 error handling
 modular system
 """
-DOSYA_ADI = "users.json"
+LOG_DATA = "log.txt"
+def loadLog():
+        with open(LOG_DATA, 'r') as f:
+            return f.read()      
+def saveLog(log_data):
+    with open(LOG_DATA, 'a') as f:
+        f.write(log_data)
 
+FILE_USERS = "users.json"
 def loadUsers():
     try:
-        with open(DOSYA_ADI, 'r') as f:
+        with open(FILE_USERS, 'r') as f:
             return json.load(f)
     except json.JSONDecodeError:
         return {}
-
-def saveUsers(data):
-    with open(DOSYA_ADI, 'w') as f:
-        json.dump(data, f, indent=4)
+def saveUsers(user_data):
+    with open(FILE_USERS, 'w') as f:
+        json.dump(user_data, f, indent=4)
 
 #user,password,role
 users = loadUsers()
@@ -38,6 +44,7 @@ def logActivity(username, action, status):
         'action': action,
         'status': status
     })
+    return activity_log
 
 #Qeydiyyat hissesi,qeydiyyatdan kecen ilk nefer admin hesab olunur.
 def registerUser():
@@ -67,6 +74,9 @@ def loginUser():
     if user not in users:
         print("\nUser not found!")
         logActivity(user, "Login Attempt", "Failure: User not found")
+        for log in activity_log[-1:]:
+            saveLog(f"{log['timestamp']} | {log['username']} | {log['action']} | {log['status']}\n")
+        
          
     password = input("Password: ")
     if users[user]['password'] == password:
@@ -160,8 +170,7 @@ def adminPanel():
         
         elif choice == '3':
             print("\nActivity Log:")
-            for log in activity_log[-10:]:
-                print(f"{log['timestamp']} | {log['username']} | {log['action']} | {log['status']}")
+            print(loadLog())
         
         elif choice == '4':
             break

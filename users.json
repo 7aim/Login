@@ -1,10 +1,6 @@
 {
     "a": {
-        "password": "ssd",
+        "password": "1",
         "role": "admin"
-    },
-    "b": {
-        "password": "2",
-        "role": "user"
     }
 }
