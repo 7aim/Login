@@ -1,13 +1,6 @@
 import datetime
 import json
 
-"""
-@Homework@
-session management
-hashing passwords
-error handling ??? 
-modular system
-"""
 LOG_DATA = "log.txt"
 def loadLog():
         with open(LOG_DATA, 'r') as f:
@@ -217,60 +210,5 @@ def adminPanel():
         elif choice == '4':
             break
         
-        else:
-            print("\nInvalid choice!")
-
-# Esas hisse
-while True:
-    print("\n" + "-"*30)
-
-    # Hesab qeydiyyatdadirsa bu hisseye atir
-    logged_in = loadSession()
-    if logged_in:
-        print(f"Logged in as: {logged_in} ({users[logged_in]['role']})")
-
-        print("1. Logout")
-        print("2. Reset Password")
-        print("3. Delete Account")
-        if users[logged_in]['role'] == 'admin':
-            print("4. Admin Panel")
-        print("5. Exit")
-        
-        choice = input("Select: ")
-        
-        if choice == '1':
-            logActivity(logged_in, "Logout", "Success")
-            with open("session.json", "w") as file:
-                file.write("")
-            saveLogTemp()
-            logged_in = None
-        elif choice == '2':
-            resetPassword()
-        elif choice == '3':
-            deleteAccount()
-        elif choice == '4' and users[logged_in]['role'] == 'admin':
-            adminPanel()
-        elif choice == '5':
-            print("\nExiting...")
-            break
-        else:
-            print("\nInvalid choice!")
-    
-    # Hesab qeydiyyatda deyilse bu hisseye atir
-    else:
-
-        print("1. Register")
-        print("2. Login")
-        print("3. Exit")
-
-        choice = input("Select: ")
-        
-        if choice == '1':
-            registerUser()
-        elif choice == '2':
-            loginUser()
-        elif choice == '3':
-            print("\nExiting...")
-            break
         else:
             print("\nInvalid choice!")
