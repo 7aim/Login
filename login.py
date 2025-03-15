@@ -5,7 +5,7 @@ import json
 @Homework@
 session management
 hashing passwords
-error handling
+error handling ??? 
 modular system
 """
 LOG_DATA = "log.txt"
@@ -26,10 +26,20 @@ def loadUsers():
 def saveUsers(user_data):
     with open(FILE_USERS, 'w') as f:
         json.dump(user_data, f, indent=4)
-
 def saveLogTemp():
     for log in activity_log[-1:]:
         saveLog(f"{log['timestamp']} | {log['username']} | {log['action']} | {log['status']}\n")
+
+SESSION_DATA = "session.json"
+def loadSession():
+    try:
+        with open(SESSION_DATA,"r") as f:
+            return json.load(f)
+    except json.JSONDecodeError:
+        return {}
+def saveSession(session_data):
+    with open(SESSION_DATA,"w") as f:
+        json.dump(session_data, f, indent=4)
 
 #user,password,role
 users = loadUsers()
@@ -96,6 +106,7 @@ def loginUser():
     password = input("Password: ")
     if users[user]['password'] == password:
         logged_in = user
+        saveSession(logged_in)
         print(f"\nWelcome {user}!")
 
         logActivity(user, "Login", "Success")
@@ -214,6 +225,7 @@ while True:
     print("\n" + "-"*30)
 
     # Hesab qeydiyyatdadirsa bu hisseye atir
+    logged_in = loadSession()
     if logged_in:
         print(f"Logged in as: {logged_in} ({users[logged_in]['role']})")
 
@@ -228,6 +240,8 @@ while True:
         
         if choice == '1':
             logActivity(logged_in, "Logout", "Success")
+            with open("session.json", "w") as file:
+                file.write("")
             saveLogTemp()
             logged_in = None
         elif choice == '2':
