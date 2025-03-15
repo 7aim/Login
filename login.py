@@ -38,7 +38,7 @@ activity_log = []
 #current account
 logged_in = None
 
-#Giris,cixis kimi emaliyyatlari qeyde alir.
+# Giris,cixis kimi emaliyyatlari qeyde alir.
 def logActivity(username, action, status):
     timestamp = datetime.datetime.now()
     activity_log.append({
@@ -49,19 +49,26 @@ def logActivity(username, action, status):
     })
     return activity_log
 
-#Qeydiyyat hissesi,qeydiyyatdan kecen ilk nefer admin hesab olunur.
+# Qeydiyyat hissesi,qeydiyyatdan kecen ilk nefer admin hesab olunur.
 def registerUser():
     global users
+    #name
     user = input("Username: ")
+    while len(user) < 3:
+        print("Character number must be greater than 2")
+        user = input("Username: ")
     while user in users:
         print("\nUser already exists!")
         user = input("Username: ")  
 
         logActivity(user, "Register Attempt", "Failure: User exists")
-        saveLogTemp()
-         
+        saveLogTemp()    
+    #password
     password = input("Password: ")
-    print(len(users))
+    while len(password) < 3:
+        print("Password length must be greater than 5")
+        password = input("Password: ")
+    #role
     if len(users) == 0:
         role = 'admin'
     else:
@@ -74,9 +81,10 @@ def registerUser():
     logActivity(user, "Register", "Success")
     saveLogTemp()
 
-#Login hissesi
+# Login hissesi
 def loginUser():
     global logged_in
+    #name
     user = input("Username: ")
     while user not in users:
         print("\nUser not found!")
@@ -84,8 +92,7 @@ def loginUser():
 
         logActivity(user, "Login Attempt", "Failure: User not found")
         saveLogTemp()
-        
-         
+    #password
     password = input("Password: ")
     if users[user]['password'] == password:
         logged_in = user
@@ -97,17 +104,18 @@ def loginUser():
         print("\nIncorrect password!")
         logActivity(user, "Login Attempt", "Failure: Wrong password")
         saveLogTemp()
+        loginUser()
 
-#Sifre sifirlama
+# Sifre sifirlama
 def resetPassword():
     global logged_in
+
     if logged_in is None:
         print("\nYou need to login first!")
 
         logActivity(None, "Password Reset Attempt", "Failure: Not logged in")
-        saveLogTemp()
-        
-    #admin basqalarinin sifresini deyise biler.
+        saveLogTemp()     
+    # Admin basqalarinin sifresini deyise biler.
     if users[logged_in]['role'] == 'admin':
         target = input("Enter username to reset: ")
         if target not in users:
@@ -116,7 +124,6 @@ def resetPassword():
             logActivity(logged_in, "Admin Password Reset", f"Failure: {target} not found")
             saveLogTemp()
             resetPassword()
-                    
     else:
         target = logged_in
     
@@ -127,24 +134,22 @@ def resetPassword():
     logActivity(logged_in, "Password Reset", f"Success: {target}'s password changed")
     saveLogTemp()
 
-#Hesab silme
+# Hesab silme
 def deleteAccount():
     global logged_in, users
+
     if logged_in is None:
         print("\nLogin required!")
 
         logActivity(None, "Delete Attempt", "Failure: Not logged in")
-        saveLogTemp()
-        
-    
+        saveLogTemp() 
     if users[logged_in]['role'] == 'admin':
         target = input("Enter username to delete: ")
         if target not in users:
             print("\nUser not found!")
 
             logActivity(logged_in, "Admin Delete Attempt", f"Failure: {target} not found")
-            saveLogTemp()
-            
+            saveLogTemp()          
     else:
         target = logged_in
     
@@ -162,7 +167,7 @@ def deleteAccount():
         logActivity(logged_in, "Delete Attempt", "Cancelled")
         saveLogTemp()
 
-#Adminin deyisiklikler apardigi hisse(Qeydiyyatlara ve loga baxmaq,rol deyismek)
+# Adminin deyisiklikler apardigi hisse(Qeydiyyatlara ve loga baxmaq,rol deyismek)
 def adminPanel():
     while True:
         print("\n[ADMIN PANEL]")
@@ -204,11 +209,11 @@ def adminPanel():
         else:
             print("\nInvalid choice!")
 
-#Esas hisse
+# Esas hisse
 while True:
     print("\n" + "-"*30)
 
-    #hesab qeydiyyatdadirsa bu hisseye atir
+    # Hesab qeydiyyatdadirsa bu hisseye atir
     if logged_in:
         print(f"Logged in as: {logged_in} ({users[logged_in]['role']})")
 
@@ -237,7 +242,7 @@ while True:
         else:
             print("\nInvalid choice!")
     
-    #hesab qeydiyyatda deyilse bu hisseye atir
+    # Hesab qeydiyyatda deyilse bu hisseye atir
     else:
 
         print("1. Register")
