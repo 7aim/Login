@@ -3,7 +3,6 @@ import json
 
 """
 @Homework@
-users, activity_log should be as external file (.txt)
 session management
 hashing passwords
 error handling
@@ -27,6 +26,10 @@ def loadUsers():
 def saveUsers(user_data):
     with open(FILE_USERS, 'w') as f:
         json.dump(user_data, f, indent=4)
+
+def saveLogTemp():
+    for log in activity_log[-1:]:
+        saveLog(f"{log['timestamp']} | {log['username']} | {log['action']} | {log['status']}\n")
 
 #user,password,role
 users = loadUsers()
@@ -53,7 +56,9 @@ def registerUser():
     while user in users:
         print("\nUser already exists!")
         user = input("Username: ")  
+
         logActivity(user, "Register Attempt", "Failure: User exists")
+        saveLogTemp()
          
     password = input("Password: ")
     print(len(users))
@@ -65,41 +70,51 @@ def registerUser():
     users[user] = {'password': password, 'role': role}
     saveUsers(users)
     print(f"\nRegistration successful. You're now {'admin' if role == 'admin' else 'user'}!")
+
     logActivity(user, "Register", "Success")
+    saveLogTemp()
 
 #Login hissesi
 def loginUser():
     global logged_in
     user = input("Username: ")
-    if user not in users:
+    while user not in users:
         print("\nUser not found!")
+        user = input("Username: ")
+
         logActivity(user, "Login Attempt", "Failure: User not found")
-        for log in activity_log[-1:]:
-            saveLog(f"{log['timestamp']} | {log['username']} | {log['action']} | {log['status']}\n")
+        saveLogTemp()
         
          
     password = input("Password: ")
     if users[user]['password'] == password:
         logged_in = user
         print(f"\nWelcome {user}!")
+
         logActivity(user, "Login", "Success")
+        saveLogTemp()
     else:
         print("\nIncorrect password!")
         logActivity(user, "Login Attempt", "Failure: Wrong password")
+        saveLogTemp()
 
 #Sifre sifirlama
 def resetPassword():
     global logged_in
     if logged_in is None:
         print("\nYou need to login first!")
+
         logActivity(None, "Password Reset Attempt", "Failure: Not logged in")
+        saveLogTemp()
         
     #admin basqalarinin sifresini deyise biler.
     if users[logged_in]['role'] == 'admin':
         target = input("Enter username to reset: ")
         if target not in users:
             print("\nUser not found!")
+
             logActivity(logged_in, "Admin Password Reset", f"Failure: {target} not found")
+            saveLogTemp()
             resetPassword()
                     
     else:
@@ -108,21 +123,27 @@ def resetPassword():
     new_pass = input("New password: ")
     users[target]['password'] = new_pass
     print("\nPassword updated successfully!")
+
     logActivity(logged_in, "Password Reset", f"Success: {target}'s password changed")
+    saveLogTemp()
 
 #Hesab silme
 def deleteAccount():
     global logged_in, users
     if logged_in is None:
         print("\nLogin required!")
+
         logActivity(None, "Delete Attempt", "Failure: Not logged in")
+        saveLogTemp()
         
     
     if users[logged_in]['role'] == 'admin':
         target = input("Enter username to delete: ")
         if target not in users:
             print("\nUser not found!")
+
             logActivity(logged_in, "Admin Delete Attempt", f"Failure: {target} not found")
+            saveLogTemp()
             
     else:
         target = logged_in
@@ -131,12 +152,15 @@ def deleteAccount():
     if confirm == 'y':
         del users[target]
         print("\nAccount deleted!")
+
         logActivity(logged_in, "Account Deleted", f"Success: {target} removed")
+        saveLogTemp()
         if target == logged_in:
             logged_in = None
     else:
         print("\nDeletion canceled!")
         logActivity(logged_in, "Delete Attempt", "Cancelled")
+        saveLogTemp()
 
 #Adminin deyisiklikler apardigi hisse(Qeydiyyatlara ve loga baxmaq,rol deyismek)
 def adminPanel():
@@ -152,6 +176,7 @@ def adminPanel():
             print("\nRegistered Users:")
             for user in users.items():
                 print(f"- user : {user[0]} --- role : {user[1]["role"]}")
+            print(f"- user : {user[0]} --- role : {user[1]["role"]}")
         
         elif choice == '2':
             user = input("Username: ")
@@ -165,6 +190,7 @@ def adminPanel():
                 users[user]['role'] = new_role
                 print("\nRole updated!")
                 logActivity(logged_in, "Role Changed", f"{user} -> {new_role}")
+                saveLogTemp()
             else:
                 print("\nInvalid role!")
         
@@ -197,6 +223,7 @@ while True:
         
         if choice == '1':
             logActivity(logged_in, "Logout", "Success")
+            saveLogTemp()
             logged_in = None
         elif choice == '2':
             resetPassword()

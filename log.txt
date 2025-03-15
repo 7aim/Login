@@ -1,1 +1,3 @@
-2025-03-15 18:30:29.884336 | dfjsdfh | Login Attempt | Failure: User not found
+2025-03-15 19:07:22.659232 | a | Register | Success
+2025-03-15 19:07:51.169933 | a | Login Attempt | Failure: User not found
+2025-03-15 19:07:52.264191 | a | Login | Success
