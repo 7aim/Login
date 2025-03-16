@@ -25,7 +25,7 @@ def saveUsers(user_data):
     with open(FILE_USERS, 'w') as f:
         json.dump(user_data, f, indent=4)
 def saveLogTemp():
-    for log in activity_log[-1:]:
+    for log in activity_log[-1:]: # Her defesinde son logu yazma
         saveLog(f"{log['timestamp']} | {log['username']} | {log['action']} | {log['status']}\n")
 
 SESSION_DATA = "db/session.json"
@@ -73,8 +73,8 @@ def registerUser():
         saveLogTemp()    
     #password
     password = input("Password: ")
-    while len(password) < 3:
-        print("Password length must be greater than 5")
+    while len(password) < 5:
+        print("Password length must be greater than 4")
         password = input("Password: ")
     hashed_password = hashPassword(password)
     #role
@@ -130,12 +130,13 @@ def resetPassword():
     # Admin basqalarinin sifresini deyise biler.
     if users[logged_in]['role'] == 'admin':
         target = input("Enter username to reset: ")
-        if target not in users:
+        while target not in users:
             print("User not found!\n")
 
             logActivity(logged_in, "Admin Password Reset", f"Failure: {target} not found")
             saveLogTemp()
-            resetPassword()
+            target = input("Enter username to reset: ")
+
     else:
         target = logged_in
     
@@ -195,7 +196,6 @@ def adminPanel():
             print("\nRegistered Users:")
             for user in users.items():
                 print(f"- user : {user[0]} --- role : {user[1]["role"]}")
-            print(f"- user : {user[0]} --- role : {user[1]["role"]}")
         
         elif choice == '2':
             user = input("Username: ")
