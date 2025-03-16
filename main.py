@@ -1,8 +1,4 @@
 import login
-"""
-@Homework@
-hashing passwords
-"""
 
 while True:
     print("\n" + "-"*30)
@@ -10,6 +6,7 @@ while True:
     # Hesab qeydiyyatdadirsa bu hisseye atir
     logged_in = login.loadSession()
     if logged_in:
+        print(logged_in)
         print(f"Logged in as: {logged_in} ({login.users[logged_in]['role']})")
 
         print("1. Logout")
@@ -30,7 +27,7 @@ while True:
         elif choice == '2':
             login.resetPassword()
         elif choice == '3':
-            login.eleteAccount()
+            login.deleteAccount()
         elif choice == '4' and login.users[logged_in]['role'] == 'admin':
             login.adminPanel()
         elif choice == '5':

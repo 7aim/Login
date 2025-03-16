@@ -2,11 +2,9 @@ import datetime
 import hashlib
 import json
 
+# Sifre hashlama funksiyasi
 def hashPassword(password):
     return hashlib.sha256(password.encode('utf-8')).hexdigest()
-
-def verify_password(entered_password, stored_hash):
-    return entered_password == stored_hash
 
 LOG_DATA = "log.txt"
 def loadLog():
@@ -46,8 +44,7 @@ users = loadUsers()
 #log
 activity_log = []
 #current account
-logged_in = None
-hashed_password = ""
+logged_in = loadSession()
 
 # Giris,cixis kimi emaliyyatlari qeyde alir.
 def logActivity(username, action, status):
@@ -63,7 +60,6 @@ def logActivity(username, action, status):
 # Qeydiyyat hissesi,qeydiyyatdan kecen ilk nefer admin hesab olunur.
 def registerUser():
     global users
-
     #name
     user = input("Username: ")
     while len(user) < 3:
@@ -97,7 +93,6 @@ def registerUser():
 # Login hissesi
 def loginUser():
     global logged_in
-
     #name
     user = input("Username: ")
     while user not in users:
@@ -125,7 +120,7 @@ def loginUser():
 
 # Sifre sifirlama
 def resetPassword():
-    global logged_in
+    
 
     if logged_in is None:
         print("You need to login first!\n")
@@ -145,7 +140,9 @@ def resetPassword():
         target = logged_in
     
     new_pass = input("New password: ")
+    new_pass = hashPassword(new_pass)
     users[target]['password'] = new_pass
+    saveUsers(users)
     print("Password updated successfully!\n")
 
     logActivity(logged_in, "Password Reset", f"Success: {target}'s password changed")
@@ -154,7 +151,7 @@ def resetPassword():
 # Hesab silme
 def deleteAccount():
     global logged_in, users
-
+    logged_in = loadSession()
     if logged_in is None:
         print("Login required!\n")
 
