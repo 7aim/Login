@@ -1,2 +1,0 @@
-2025-03-16 15:27:06 | POLAD | Register | Success
-2025-03-16 15:27:18 | POLAD | Login | Success

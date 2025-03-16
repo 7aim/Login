@@ -20,7 +20,7 @@ while True:
         
         if choice == '1':
             login.logActivity(logged_in, "Logout", "Success")
-            with open("session.json", "w") as file:
+            with open("db/session.json", "w") as file:
                 file.write("")
             login.saveLogTemp()
             logged_in = None
