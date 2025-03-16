@@ -6,7 +6,7 @@ import json
 def hashPassword(password):
     return hashlib.sha256(password.encode('utf-8')).hexdigest()
 
-LOG_DATA = "log.txt"
+LOG_DATA = "db/log.txt"
 def loadLog():
         with open(LOG_DATA, 'r') as f:
             return f.read()      
@@ -14,7 +14,7 @@ def saveLog(log_data):
     with open(LOG_DATA, 'a') as f:
         f.write(log_data)
 
-FILE_USERS = "users.json"
+FILE_USERS = "db/users.json"
 def loadUsers():
     try:
         with open(FILE_USERS, 'r') as f:
@@ -28,7 +28,7 @@ def saveLogTemp():
     for log in activity_log[-1:]:
         saveLog(f"{log['timestamp']} | {log['username']} | {log['action']} | {log['status']}\n")
 
-SESSION_DATA = "session.json"
+SESSION_DATA = "db/session.json"
 def loadSession():
     try:
         with open(SESSION_DATA,"r") as f:
@@ -48,7 +48,7 @@ logged_in = loadSession()
 
 # Giris,cixis kimi emaliyyatlari qeyde alir.
 def logActivity(username, action, status):
-    timestamp = datetime.datetime.now()
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     activity_log.append({
         'timestamp': timestamp,
         'username': username,
